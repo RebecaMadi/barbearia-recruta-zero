@@ -1,7 +1,7 @@
 #ifndef BARBEARIA_H
 #define BARBEARIA_H
 
-#define quantidade 1000
+#define quantidade 50 //Quantidade de clientes para testar
 #define BUFFERSIZE 20 /*Tamanho da fila de clientes*/
 //Estruturas usadas
 typedef struct{
@@ -29,8 +29,32 @@ typedef struct{
     int te_o, te_s, te_c, te_l;
 }Info;
 
+//variaveis
+Cliente buffer[BUFFERSIZE];
+Cliente *clienteA, *clienteB, *clienteC;
+
+Relatorio r, ra, rb, rc;
+Info info, infoa, infob, infoc;
+
+/*Mutex controlador do espaço cŕitico e semáforos de controle da quantidade da clientes na fila.
+O Semáforo controla a entrada e saída de clientes.*/
+pthread_mutex_t mutex; 
+sem_t p;
+
+/* Quantidade de threads usadas, tanto para o produtor quanto para o consumidor*/
+//Tainha
+//Caso A
+pthread_t recrutaZero_atende, dentinho_atende, otto_atende;
+pthread_t recrutaZero_libera, dentinho_libera, otto_libera;
+
+/*Indices que percorrerão o vetor*/
+int ccons=0, ct=0, t=0, qs=0, ta, tb, tc, z=0, vagas=0;
+int x=0, m=0, op;
+int t_Tainha, in=0;
+
 //Funções de produção e consumo
-void *prod(void *arg);
+void *prodC(void *arg);
+void *consC(void *arg);
 void *consA(void *arg);
 void *consB(void *arg);
 void *prodB(void *arg);
@@ -81,7 +105,11 @@ void iniciarRelatorio(Relatorio* r){
 
 void exibe();
 int busca_maior();
+int busca(int i);
 int temCliente();
+int temClienteO();
+int temClienteS();
+int temClienteC();
 int verificaQuantidade(int i);
 void comprimentoFila();
 void ocupacaoCadeiras();
@@ -89,7 +117,7 @@ void tempoAtendimento();
 void tempoEspera();
 void numeoAtendimentos();
 void atualizaPct();
-int semaforoDisponivel();
+int semaforoDisponivel(int i);
 void atender_cliente();
 void liberar_cliente();
 void tntEscovinha();
